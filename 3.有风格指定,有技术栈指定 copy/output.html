@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek-R1: 强化学习驱动的推理革命</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/framer-motion/10.16.4/framer-motion.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            background-color: #000000;
+            color: #E0E0E0; /* Light gray for general text */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            overflow-x: hidden;
+        }
+        .tesla-red {
+            color: #E31937;
+        }
+        .bg-tesla-red {
+            background-color: #E31937;
+        }
+        .border-tesla-red {
+            border-color: #E31937;
+        }
+        .bento-tile {
+            background-color: rgba(20, 20, 20, 0.8); /* Darker, slightly transparent tile */
+            border: 1px solid rgba(227, 25, 55, 0.3); /* Subtle red border */
+            border-radius: 24px; /* Apple-like rounded corners */
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+        }
+        .bento-tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(227, 25, 55, 0.2);
+        }
+        .highlight-number {
+            font-size: 4rem; /* Default, can be overridden */
+            font-weight: 700;
+            line-height: 1;
+        }
+        .gradient-text-red {
+            background: linear-gradient(90deg, #E31937, rgba(227, 25, 55, 0.7));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .icon-bg {
+            background-color: rgba(227, 25, 55, 0.1);
+            border-radius: 50%;
+            padding: 0.75rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* For Chart.js dark theme */
+        canvas {
+            max-height: 300px; /* Control chart height */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 py-16 md:py-24">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            class="text-center mb-16 md:mb-24"
+        >
+            <h1 class="text-5xl md:text-7xl font-bold mb-4">
+                <span class="tesla-red">DeepSeek-R1</span>
+            </h1>
+            <p class="text-xl md:text-3xl text-gray-300 font-light">
+                强化学习<span class="tesla-red">激励</span>大语言模型<span class="tesla-red">推理</span>能力
+            </p>
+            <p class="text-sm md:text-base text-gray-500 mt-2">Incentivizing Reasoning Capability in LLMs via Reinforcement Learning</p>
+        </motion.div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+
+            <!-- Tile 1: R1-Zero -->
+            <motion.div
+                class="bento-tile md:col-span-2 lg:col-span-1"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+            >
+                <div>
+                    <div class="icon-bg mb-4">
+                        <i class="fas fa-brain fa-lg tesla-red"></i>
+                    </div>
+                    <h2 class="text-3xl font-semibold mb-2 tesla-red">R1-Zero</h2>
+                    <p class="text-gray-400 text-sm mb-3">纯粹强化学习的探索</p>
+                    <p class="text-gray-300 text-lg">无需SFT预步，通过RL展现<strong class="tesla-red">卓越推理</strong>潜力，但也面临可读性与语言混合挑战。</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-4">Pure RL without SFT, showcasing reasoning potential.</p>
+            </motion.div>
+
+            <!-- Tile 2: R1 -->
+            <motion.div
+                class="bento-tile md:col-span-2 lg:col-span-1"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+            >
+                <div>
+                    <div class="icon-bg mb-4">
+                        <i class="fas fa-layer-group fa-lg tesla-red"></i>
+                    </div>
+                    <h2 class="text-3xl font-semibold mb-2 tesla-red">R1</h2>
+                    <p class="text-gray-400 text-sm mb-3">多阶段与冷启动优化</p>
+                    <p class="text-gray-300 text-lg">整合多阶段训练与冷启动数据，<strong class="tesla-red">全面提升</strong>性能与用户友好度，比肩顶尖模型。</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-4">Multi-stage training & cold-start for enhanced performance.</p>
+            </motion.div>
+
+            <!-- Tile 3: AIME 2024 Score -->
+            <motion.div
+                class="bento-tile text-center items-center justify-center"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+            >
+                <div>
+                    <p class="text-xl text-gray-300 mb-1">AIME 2024</p>
+                    <p class="highlight-number text-6xl md:text-7xl tesla-red">79.8<span class="text-3xl">%</span></p>
+                    <p class="text-sm text-gray-400 mt-1">Pass@1</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-4 self-end w-full">Exceptional Math Reasoning</p>
+            </motion.div>
+
+            <!-- Tile 4: MATH-500 Score -->
+            <motion.div
+                class="bento-tile text-center items-center justify-center"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+            >
+                 <div>
+                    <p class="text-xl text-gray-300 mb-1">MATH-500</p>
+                    <p class="highlight-number text-6xl md:text-7xl tesla-red">97.3<span class="text-3xl">%</span></p>
+                    <p class="text-sm text-gray-400 mt-1">Pass@1</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-4 self-end w-full">Near-Perfect Math Performance</p>
+            </motion.div>
+
+            <!-- Tile 5: Performance Chart (Fig 1 data) -->
+            <motion.div
+                class="bento-tile md:col-span-2 lg:col-span-2 xl:col-span-2"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+            >
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="icon-bg mr-3">
+                             <i class="fas fa-chart-line fa-lg tesla-red"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-semibold tesla-red">性能基准</h2>
+                            <p class="text-gray-400 text-sm">Benchmark Performance Highlights</p>
+                        </div>
+                    </div>
+                    <canvas id="performanceChart"></canvas>
+                </div>
+                <p class="text-xs text-gray-500 mt-4">DeepSeek-R1 vs OpenAI-o1-1217 & others.</p>
+            </motion.div>
+
+            <!-- Tile 6: Codeforces -->
+            <motion.div
+                class="bento-tile text-center items-center justify-center"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+            >
+                <div>
+                    <p class="text-xl text-gray-300 mb-1">Codeforces</p>
+                    <p class="highlight-number text-5xl md:text-6xl tesla-red">96.3<span class="text-3xl">%</span></p>
+                    <p class="text-sm text-gray-400 mt-1">Percentile (2029 Elo)</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-4 self-end w-full">Expert-Level Coding</p>
+            </motion.div>
+
+            <!-- Tile 7: MMLU -->
+            <motion.div
+                class="bento-tile text-center items-center justify-center"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+            >
+                <div>
+                    <p class="text-xl text-gray-300 mb-1">MMLU</p>
+                    <p class="highlight-number text-6xl md:text-7xl tesla-red">90.8<span class="text-3xl">%</span></p>
+                    <p class="text-sm text-gray-400 mt-1">Pass@1</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-4 self-end w-full">Strong General Knowledge</p>
+            </motion.div>
+
+            <!-- Tile 8: Distillation -->
+            <motion.div
+                class="bento-tile md:col-span-1"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+            >
+                <div>
+                    <div class="icon-bg mb-4">
+                        <i class="fas fa-compress-alt fa-lg tesla-red"></i>
+                    </div>
+                    <h2 class="text-3xl font-semibold mb-2 tesla-red">模型蒸馏</h2>
+                    <p class="text-gray-400 text-sm mb-3">小模型蕴含大能量</p>
+                    <p class="text-gray-300 text-lg">成功将R1的推理能力蒸馏到<strong class="tesla-red">更小模型</strong> (1.5B-70B)，性能远超同级，甚至优于部分大模型。</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-4">Powerful capabilities distilled into smaller models.</p>
+            </motion.div>
+
+            <!-- Tile 9: Open Source -->
+            <motion.div
+                class="bento-tile md:col-span-1"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+            >
+                <div>
+                    <div class="icon-bg mb-4">
+                        <i class="fab fa-github fa-lg tesla-red"></i>
+                    </div>
+                    <h2 class="text-3xl font-semibold mb-2 tesla-red">开源共享</h2>
+                    <p class="text-gray-400 text-sm mb-3">赋能研究社区</p>
+                    <p class="text-gray-300 text-lg">开源R1-Zero, R1及<strong class="tesla-red">六个蒸馏模型</strong>，推动LLM推理研究的共同进步。</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-4">Open-sourcing models to foster community research.</p>
+            </motion.div>
+
+            <!-- Tile 10: Aha Moment -->
+            <motion.div
+                class="bento-tile md:col-span-2 lg:col-span-2"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+            >
+                <div>
+                     <div class="flex items-center mb-4">
+                        <div class="icon-bg mr-3">
+                            <i class="fas fa-lightbulb fa-lg tesla-red"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-semibold tesla-red">“啊哈”时刻</h2>
+                             <p class="text-gray-400 text-sm">Aha Moment in R1-Zero</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 text-lg mb-3">在R1-Zero训练中，模型自发学习<strong class="tesla-red">重新评估</strong>初始方法，分配更多“思考时间”，展现了RL驱动下智能体自主进化解决复杂问题的潜力。</p>
+                    <blockquote class="border-l-4 border-tesla-red pl-4 italic text-gray-400 text-sm">
+                        "Wait, wait. Wait. That's an aha moment I can flag here. Let's reevaluate this step-by-step..."
+                    </blockquote>
+                </div>
+                <p class="text-xs text-gray-500 mt-4">Model spontaneously learns to rethink and re-evaluate.</p>
+            </motion.div>
+
+             <!-- Tile 11: Key Contribution - RL without SFT -->
+            <motion.div
+                class="bento-tile"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+            >
+                <div>
+                    <div class="icon-bg mb-4">
+                        <i class="fas fa-cogs fa-lg tesla-red"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-2 tesla-red">纯RL验证</h3>
+                    <p class="text-gray-300">首次公开验证，无需SFT，纯RL即可<strong class="tesla-red">激发LLM推理</strong>。为领域发展铺路。</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-4">Validating pure RL for LLM reasoning.</p>
+            </motion.div>
+
+            <!-- Tile 12: DeepSeek-R1 Pipeline -->
+            <motion.div
+                class="bento-tile"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+            >
+                <div>
+                    <div class="icon-bg mb-4">
+                        <i class="fas fa-project-diagram fa-lg tesla-red"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-2 tesla-red">R1训练流程</h3>
+                    <p class="text-gray-300">包含<strong class="tesla-red">两个RL阶段</strong>探索推理模式、对齐人类偏好，及<strong class="tesla-red">两个SFT阶段</strong>播种推理与非推理能力。</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-4">2 RL + 2 SFT stages for robust capabilities.</p>
+            </motion.div>
+        </div>
+    </div>
+
+    <script>
+        const { motion } = window.framerMotion;
+        // Chart.js setup
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['AIME 2024', 'Codeforces (%)', 'GPQA Diamond', 'MATH-500', 'MMLU', 'SWE-bench (V)'],
+                datasets: [{
+                    label: 'DeepSeek-R1',
+                    data: [79.8, 96.3, 71.5, 97.3, 90.8, 49.2],
+                    backgroundColor: 'rgba(227, 25, 55, 0.7)', // Tesla Red with alpha
+                    borderColor: '#E31937',
+                    borderWidth: 1,
+                    borderRadius: 5,
+                    barThickness: 'flex',
+                    maxBarThickness: 30
+                },
+                {
+                    label: 'OpenAI-o1-1217', // From Figure 1
+                    data: [79.2, 96.6, 75.7, 96.4, 91.8, 48.9],
+                    backgroundColor: 'rgba(100, 100, 100, 0.7)', // A gray color
+                    borderColor: '#888888',
+                    borderWidth: 1,
+                    borderRadius: 5,
+                    barThickness: 'flex',
+                    maxBarThickness: 30
+                }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y', // Horizontal bar chart for better label readability
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#E0E0E0', font: { size: 10 } },
+                        grid: { color: 'rgba(227, 25, 55, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: '#E0E0E0', font: { size: 10 } },
+                        grid: { color: 'rgba(227, 25, 55, 0.1)' }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#E0E0E0',
+                            font: { size: 12 },
+                            boxWidth: 15,
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        titleColor: '#E31937',
+                        bodyColor: '#E0E0E0',
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.x !== null) {
+                                    label += context.parsed.x + '%';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

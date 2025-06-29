@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek-R1 Report</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom styles for spacious, premium feel */
+        body {
+            font-family: 'Inter', sans-serif; /* A clean sans-serif font often used in modern UIs */
+            @apply bg-slate-50 text-slate-800 leading-relaxed;
+        }
+        h1, h2, h3, h4 {
+            @apply font-semibold text-slate-900;
+        }
+        .content-section {
+            @apply mb-12 p-8 bg-white shadow-lg rounded-lg;
+        }
+        .table-container {
+            @apply overflow-x-auto; /* For responsive tables */
+        }
+        table {
+            @apply w-full min-w-max; /* min-w-max ensures table content doesn't wrap too aggressively */
+        }
+        th, td {
+            @apply p-4 border border-slate-200 text-left;
+        }
+        th {
+            @apply bg-slate-100 font-medium text-slate-700;
+        }
+        /* Spacing for list items in TOC */
+        .toc-list li {
+            @apply mb-2;
+        }
+        .toc-list ul li {
+            @apply ml-6 mb-1;
+        }
+    </style>
+    <!-- It's often better to download Inter font or use a webfont loader, but for simplicity: -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen">
+
+    <div class="container mx-auto p-4 md:p-8 lg:p-12 max-w-6xl">
+
+        <!-- Header / Title Section -->
+        <header class="mb-12 text-center content-section">
+            <div class="flex justify-between items-start text-sm text-slate-500 mb-6">
+                <span>arXiv:2501.12948v1 [cs.CL] 22 Jan 2025</span>
+                <span class="text-2xl font-bold text-blue-600">deepseek</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning</h1>
+            <p class="text-xl text-slate-700 mb-2">DeepSeek-AI</p>
+            <p class="text-lg text-blue-500 hover:text-blue-600 transition-colors">
+                <a href="mailto:research@deepseek.com">
+                    <i class="fas fa-envelope mr-2"></i>research@deepseek.com
+                </a>
+            </p>
+        </header>
+
+        <!-- Abstract -->
+        <section id="abstract" class="content-section">
+            <h2 class="text-3xl mb-6 pb-3 border-b border-slate-200 flex items-center">
+                <i class="fas fa-file-alt mr-3 text-blue-500"></i>Abstract
+            </h2>
+            <p class="mb-4 text-lg">
+                We introduce our first-generation reasoning models, DeepSeek-R1-Zero and DeepSeek-R1. DeepSeek-R1-Zero, a model trained via large-scale reinforcement learning (RL) without supervised fine-tuning (SFT) as a preliminary step, demonstrates remarkable reasoning capabilities. Through RL, DeepSeek-R1-Zero naturally emerges with numerous powerful and intriguing reasoning behaviors. However, it encounters challenges such as poor readability, and language mixing. To address these issues and further enhance reasoning performance, we introduce DeepSeek-R1, which incorporates multi-stage training and cold-start data before RL. DeepSeek-R1 achieves performance comparable to OpenAI-01-1217 on reasoning tasks. To support the research community, we open-source DeepSeek-R1-Zero, DeepSeek-R1, and six dense models (1.5B, 7B, 8B, 14B, 32B, 70B) distilled from DeepSeek-R1 based on Qwen and Llama.
+            </p>
+        </section>
+
+        <!-- Figure 1: Benchmark Performance Chart -->
+        <section id="figure1" class="content-section">
+            <h2 class="text-3xl mb-6 pb-3 border-b border-slate-200 flex items-center">
+                <i class="fas fa-chart-bar mr-3 text-green-500"></i>Figure 1 | Benchmark Performance of DeepSeek-R1
+            </h2>
+            <p class="text-sm text-slate-600 mb-1 text-right">Accuracy / Percentile (%)</p>
+            <div class="bg-white p-6 rounded-lg shadow-inner">
+                <canvas id="benchmarkChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Table of Contents -->
+        <section id="contents" class="content-section">
+            <h2 class="text-3xl mb-6 pb-3 border-b border-slate-200 flex items-center">
+                <i class="fas fa-list-ul mr-3 text-purple-500"></i>Contents
+            </h2>
+            <div class="grid md:grid-cols-2 gap-x-8 toc-list text-lg">
+                <ul>
+                    <li><strong>1 Introduction</strong> <span class="float-right">3</span>
+                        <ul>
+                            <li>1.1 Contributions <span class="float-right">4</span></li>
+                            <li>1.2 Summary of Evaluation Results <span class="float-right">4</span></li>
+                        </ul>
+                    </li>
+                    <li><strong>2 Approach</strong> <span class="float-right">5</span>
+                        <ul>
+                            <li>2.1 Overview <span class="float-right">5</span></li>
+                            <li>2.2 DeepSeek-R1-Zero: Reinforcement Learning on the Base Model <span class="float-right">5</span>
+                                <ul>
+                                    <li>2.2.1 Reinforcement Learning Algorithm <span class="float-right">5</span></li>
+                                    <li>2.2.2 Reward Modeling <span class="float-right">6</span></li>
+                                    <li>2.2.3 Training Template <span class="float-right">6</span></li>
+                                    <li>2.2.4 Performance, Self-evolution Process and Aha Moment of DeepSeek-R1-Zero <span class="float-right">6</span></li>
+                                </ul>
+                            </li>
+                            <li>2.3 DeepSeek-R1: Reinforcement Learning with Cold Start <span class="float-right">9</span>
+                                <ul>
+                                    <li>2.3.1 Cold Start <span class="float-right">9</span></li>
+                                    <li>2.3.2 Reasoning-oriented Reinforcement Learning <span class="float-right">10</span></li>
+                                    <li>2.3.3 Rejection Sampling and Supervised Fine-Tuning <span class="float-right">10</span></li>
+                                    <li>2.3.4 Reinforcement Learning for all Scenarios <span class="float-right">11</span></li>
+                                </ul>
+                            </li>
+                            <li>2.4 Distillation: Empower Small Models with Reasoning Capability <span class="float-right">11</span></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li><strong>3 Experiment</strong> <span class="float-right">11</span>
+                        <ul>
+                            <li>3.1 DeepSeek-R1 Evaluation <span class="float-right">13</span></li>
+                            <li>3.2 Distilled Model Evaluation <span class="float-right">14</span></li>
+                        </ul>
+                    </li>
+                    <li><strong>4 Discussion</strong> <span class="float-right">14</span>
+                        <ul>
+                            <li>4.1 Distillation v.s. Reinforcement Learning <span class="float-right">14</span></li>
+                            <li>4.2 Unsuccessful Attempts <span class="float-right">15</span></li>
+                        </ul>
+                    </li>
+                    <li><strong>5 Conclusion, Limitations, and Future Work</strong> <span class="float-right">16</span></li>
+                    <li><strong>A Contributions and Acknowledgments</strong> <span class="float-right">20</span></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Sample Textual Content and Table (from Page 4) -->
+        <section id="introduction-sample" class="content-section">
+            <h2 class="text-3xl mb-6 pb-3 border-b border-slate-200 flex items-center">
+                <i class="fas fa-stream mr-3 text-indigo-500"></i>1.2 Summary of Evaluation Results (Excerpt)
+            </h2>
+            <ul class="list-disc pl-6 space-y-3 text-lg">
+                <li>
+                    <strong>Reasoning tasks:</strong> (1) DeepSeek-R1 achieves a score of 79.8% Pass@1 on AIME 2024, slightly surpassing OpenAI-o1-1217. On MATH-500, it attains an impressive score of 97.3%, performing on par with OpenAI-o1-1217 and significantly outperforming other models. (2) On coding-related tasks, DeepSeek-R1 demonstrates expert level in code competition tasks, as it achieves 2,029 Elo rating on Codeforces outperforming 96.3% human participants in the competition. For engineering-related tasks, DeepSeek-R1 performs slightly better than DeepSeek-V3, which could help developers in real world tasks.
+                </li>
+                <li>
+                    <strong>Knowledge:</strong> On benchmarks such as MMLU, MMLU-Pro, and GPQA Diamond, DeepSeek-R1 achieves outstanding results, significantly outperforming DeepSeek-V3 with scores of 90.8% on MMLU, 84.0% on MMLU-Pro, and 71.5% on GPQA Diamond. While its performance is slightly below that of OpenAI-01-1217 on these benchmarks, DeepSeek-R1 surpasses other closed-source models, demonstrating its competitive edge in educational tasks. On the factual benchmark SimpleQA, DeepSeek-R1 outperforms DeepSeek-V3, demonstrating its capability in handling fact-based queries. A similar trend is observed where OpenAI-01 surpasses 4o on this benchmark.
+                </li>
+            </ul>
+        </section>
+
+        <!-- Sample Table (From Page 7 - Table 2) -->
+        <section id="table2-sample" class="content-section">
+            <h2 class="text-3xl mb-6 pb-3 border-b border-slate-200 flex items-center">
+                <i class="fas fa-table mr-3 text-orange-500"></i>Table 2 | Comparison of DeepSeek-R1-Zero and OpenAI o1 models (Excerpt)
+            </h2>
+            <div class="table-container">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th rowspan="2" class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">Model</th>
+                            <th colspan="2" class="px-6 py-3 text-center text-xs font-medium text-slate-600 uppercase tracking-wider">AIME 2024</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">MATH-500</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">GPQA Diamond</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">LiveCode Bench</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">CodeForces</th>
+                        </tr>
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">pass@1</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">cons@64</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">pass@1</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">pass@1</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">pass@1</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider">rating</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-slate-200 text-slate-700">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">OpenAI-o1-mini</td>
+                            <td class="px-6 py-4 whitespace-nowrap">63.6</td>
+                            <td class="px-6 py-4 whitespace-nowrap">80.0</td>
+                            <td class="px-6 py-4 whitespace-nowrap">90.0</td>
+                            <td class="px-6 py-4 whitespace-nowrap">60.0</td>
+                            <td class="px-6 py-4 whitespace-nowrap">53.8</td>
+                            <td class="px-6 py-4 whitespace-nowrap">1820</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">OpenAI-o1-0912</td>
+                            <td class="px-6 py-4 whitespace-nowrap">74.4</td>
+                            <td class="px-6 py-4 whitespace-nowrap">83.3</td>
+                            <td class="px-6 py-4 whitespace-nowrap">94.8</td>
+                            <td class="px-6 py-4 whitespace-nowrap">77.3</td>
+                            <td class="px-6 py-4 whitespace-nowrap">63.4</td>
+                            <td class="px-6 py-4 whitespace-nowrap">1843</td>
+                        </tr>
+                        <tr class="bg-blue-50">
+                            <td class="px-6 py-4 whitespace-nowrap font-semibold">DeepSeek-R1-Zero</td>
+                            <td class="px-6 py-4 whitespace-nowrap font-semibold">71.0</td>
+                            <td class="px-6 py-4 whitespace-nowrap font-semibold">86.7</td>
+                            <td class="px-6 py-4 whitespace-nowrap font-semibold">95.9</td>
+                            <td class="px-6 py-4 whitespace-nowrap font-semibold">73.3</td>
+                            <td class="px-6 py-4 whitespace-nowrap font-semibold">50.0</td>
+                            <td class="px-6 py-4 whitespace-nowrap font-semibold">1444</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="mt-4 text-sm text-slate-600">
+                Note: This is an excerpt of Table 2. Data taken from OCR page 7.
+            </p>
+        </section>
+
+        <footer class="text-center py-8 mt-12 border-t border-slate-300">
+            <p class="text-slate-600">© 2025 DeepSeek-AI. Report generated based on OCR content.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // Chart.js for Figure 1
+        const ctxBenchmark = document.getElementById('benchmarkChart').getContext('2d');
+        const benchmarkChart = new Chart(ctxBenchmark, {
+            type: 'bar',
+            data: {
+                labels: ['AIME 2024\n(Pass@1)', 'Codeforces\n(Percentile)', 'GPQA Diamond\n(Pass@1)', 'MATH-500\n(Pass@1)', 'MMLU\n(Pass@1)', 'SWE-bench Verified\n(Resolved)'],
+                datasets: [
+                    {
+                        label: 'DeepSeek-R1',
+                        data: [79.8, 96.3, 71.5, 97.3, 90.8, 49.2],
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)', // Tailwind blue-500
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'OpenAI-01-1217',
+                        data: [79.2, 96.6, 75.7, 96.4, 91.8, 48.9],
+                        backgroundColor: 'rgba(16, 185, 129, 0.7)', // Tailwind emerald-500
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'DeepSeek-R1-32B',
+                        data: [72.6, 90.6, 60.0, 90.0, 87.4, 41.6], // Adjusted GPQA for R1-32B, estimated from graph (was lower than others)
+                        backgroundColor: 'rgba(239, 68, 68, 0.7)', // Tailwind red-500
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        borderWidth: 1
+                    },
+                     {
+                        label: 'OpenAI-01-mini',
+                        data: [63.6, 93.4, 62.1, 90.2, 88.5, 42.0],
+                        backgroundColor: 'rgba(245, 158, 11, 0.7)', // Tailwind amber-500
+                        borderColor: 'rgba(245, 158, 11, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'DeepSeek-V3',
+                        data: [39.2, 58.7, 59.1, /* MATH-500 for V3 N/A in image */ null, 85.2, 36.8], // MATH-500 DeepSeek-V3 seems absent/very low
+                        backgroundColor: 'rgba(139, 92, 246, 0.7)', // Tailwind violet-500
+                        borderColor: 'rgba(139, 92, 246, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true, // Set to true to respect canvas height/width, or false to fill container better
+                aspectRatio: 2, // Adjust as needed for better display. 16/9 ~ 1.77, 2 is a bit wider
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Accuracy / Percentile (%)',
+                            font: {
+                                size: 14,
+                                weight: '500'
+                            },
+                            color: 'rgb(71, 85, 105)' // slate-700
+                        },
+                        grid: {
+                            color: 'rgba(203, 213, 225, 0.5)' // slate-300
+                        },
+                        ticks: {
+                           color: 'rgb(100, 116, 139)' //slate-500
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false // Cleaner look without vertical grid lines
+                        },
+                         ticks: {
+                           color: 'rgb(100, 116, 139)' //slate-500
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                             font: {
+                                size: 14
+                            },
+                            color: 'rgb(71, 85, 105)' // slate-700
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(30, 41, 59, 0.9)', // slate-800
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 12
+                        },
+                        padding: 12,
+                        cornerRadius: 4
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

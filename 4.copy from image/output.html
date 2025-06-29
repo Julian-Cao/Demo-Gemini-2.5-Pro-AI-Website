@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek-R1 解读报告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            background-color: #0f172a; /* Fallback */
+            background-image: linear-gradient(to bottom right, #0f172a, #1e1b4b, #312e81);
+        }
+        .card {
+            background-color: rgba(30, 41, 59, 0.7); /* bg-slate-800 with opacity */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(51, 65, 85, 0.5); /* border-slate-700 with opacity */
+        }
+        .accent-bar {
+            display: inline-block;
+            width: 80px;
+            height: 4px;
+            background-color: #38bdf8; /* sky-500 */
+            margin-bottom: 1rem;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 50vh; /* Adjust as needed */
+            width: 90vw;  /* Adjust as needed */
+            max-width: 800px; /* Ensure it doesn't get too wide */
+        }
+    </style>
+</head>
+<body class="text-gray-200 min-h-screen">
+
+    <!-- Header Section -->
+    <header class="py-16 text-center">
+        <div class="container mx-auto px-6">
+            <h1 class="text-5xl md:text-6xl font-bold text-white mb-4">
+                DeepSeek-R1
+            </h1>
+            <p class="text-2xl md:text-3xl text-sky-300 mb-8">
+                通过强化学习激励大语言模型的推理能力
+            </p>
+            <div class="accent-bar mx-auto !mb-10"></div>
+
+            <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-12 text-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-calendar-alt mr-3 text-sky-400"></i>
+                    <span><strong class="font-semibold">发表时间:</strong> 2025年1月22日 (arXiv)</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-building mr-3 text-sky-400"></i>
+                    <span><strong class="font-semibold">机构:</strong> DeepSeek-AI</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-link mr-3 text-sky-400"></i>
+                    <a href="https://arxiv.org/abs/2501.12948v1" target="_blank" class="hover:text-sky-300 transition-colors">
+                        arXiv:2501.12948v1 [cs.CL]
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <!-- 论文背景与意义 -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-white mb-2 text-center">论文背景与意义</h2>
+            <div class="accent-bar mx-auto"></div>
+            <p class="text-lg text-gray-300 max-w-3xl mx-auto text-center leading-relaxed">
+                DeepSeek-R1 旨在通过大规模强化学习（RL）提升大语言模型的推理能力。论文介绍了 DeepSeek-R1-Zero (纯RL，无SFT预备) 和 DeepSeek-R1 (多阶段训练，包含冷启动数据和RL) 两款模型。此研究探索了不依赖监督数据，仅通过RL自我演化发展推理能力的可能性，并解决了纯RL模型可能存在的如可读性差、语言混合等问题，最终实现了与顶尖模型（如OpenAI-01-1217）相媲美的推理性能。
+            </p>
+        </section>
+
+        <!-- 核心贡献与创新 -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-white mb-2 text-center">核心贡献与创新</h2>
+            <div class="accent-bar mx-auto"></div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                <div class="card p-6 rounded-lg shadow-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-brain text-2xl text-sky-400 mr-4"></i>
+                        <h3 class="text-xl font-semibold text-white">纯强化学习探索</h3>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">
+                        DeepSeek-R1-Zero 直接在基础模型上应用RL，无需SFT作为预备步骤，展示了LLM仅通过RL激励推理能力的潜力，实现了自我演化、反思和长CoT生成等行为。
+                    </p>
+                </div>
+                <div class="card p-6 rounded-lg shadow-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-cogs text-2xl text-sky-400 mr-4"></i>
+                        <h3 class="text-xl font-semibold text-white">DeepSeek-R1 训练管线</h3>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">
+                        引入了包含两个RL阶段（发现推理模式、对齐人类偏好）和两个SFT阶段（推理种子、非推理能力）的复杂管线，以提升性能和用户友好性。
+                    </p>
+                </div>
+                <div class="card p-6 rounded-lg shadow-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-compress-arrows-alt text-2xl text-sky-400 mr-4"></i>
+                        <h3 class="text-xl font-semibold text-white">模型蒸馏</h3>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">
+                        证明了大型模型的推理模式可以有效蒸馏到小型模型中，开源了基于Qwen和Llama的多个蒸馏模型（1.5B到70B），显著优于在小型模型上直接应用RL。
+                    </p>
+                </div>
+                 <div class="card p-6 rounded-lg shadow-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-book-open text-2xl text-sky-400 mr-4"></i>
+                        <h3 class="text-xl font-semibold text-white">开源贡献</h3>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">
+                        开源 DeepSeek-R1-Zero, DeepSeek-R1 及六个稠密蒸馏模型，支持科研社区进一步研究和发展。
+                    </p>
+                </div>
+                <div class="card p-6 rounded-lg shadow-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-lightbulb text-2xl text-sky-400 mr-4"></i>
+                        <h3 class="text-xl font-semibold text-white">“Aha Moment” 发现</h3>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">
+                        在 DeepSeek-R1-Zero 训练过程中观察到模型自主学习重新评估初始方法、分配更多思考时间的“顿悟时刻”，展现了RL的强大潜力。
+                    </p>
+                </div>
+                 <div class="card p-6 rounded-lg shadow-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-balance-scale text-2xl text-sky-400 mr-4"></i>
+                        <h3 class="text-xl font-semibold text-white">可读性与偏好对齐</h3>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">
+                        通过引入冷启动数据、特定的输出格式约束以及语言一致性奖励，解决了纯RL模型输出可读性差和语言混合的问题。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 性能突破 -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-white mb-2 text-center">性能突破</h2>
+            <div class="accent-bar mx-auto"></div>
+            <p class="text-lg text-gray-300 max-w-3xl mx-auto text-center leading-relaxed mb-10">
+                DeepSeek-R1 在多个推理基准测试中表现出色，尤其在数学和编程领域。下图展示了其与 OpenAI 等模型的性能对比（数据来自论文 Figure 1）。
+            </p>
+            <div class="card p-6 rounded-lg shadow-xl chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+             <p class="text-sm text-gray-400 mt-4 text-center">
+                * 数值越高越好。Codeforces为百分位，其他为 Pass@1 准确率。
+            </p>
+        </section>
+
+        <!-- 未来展望与局限 -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-white mb-2 text-center">未来展望与局限</h2>
+            <div class="accent-bar mx-auto"></div>
+             <div class="grid md:grid-cols-2 gap-8 mt-8">
+                <div class="card p-6 rounded-lg shadow-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-rocket text-2xl text-sky-400 mr-4"></i>
+                        <h3 class="text-xl font-semibold text-white">未来方向</h3>
+                    </div>
+                    <ul class="list-disc list-inside text-gray-300 space-y-2 pl-2">
+                        <li>提升通用能力：如函数调用、多轮对话、复杂角色扮演、JSON输出等。</li>
+                        <li>解决语言混合问题：优化对非中英文查询的处理。</li>
+                        <li>改进提示工程：降低对提示词的敏感性。</li>
+                        <li>软件工程任务：通过异步评估和拒绝采样提升RL在软件工程任务上的效率和表现。</li>
+                    </ul>
+                </div>
+                <div class="card p-6 rounded-lg shadow-xl">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-exclamation-triangle text-2xl text-orange-400 mr-4"></i>
+                        <h3 class="text-xl font-semibold text-white">当前局限</h3>
+                    </div>
+                     <ul class="list-disc list-inside text-gray-300 space-y-2 pl-2">
+                        <li>通用能力尚不及 DeepSeek-V3：在函数调用等任务上仍有提升空间。</li>
+                        <li>语言混合：处理非中英文查询时可能出现语言混合。</li>
+                        <li>提示敏感性：少样本提示可能降低性能，推荐零样本设置。</li>
+                        <li>软件工程RL应用不足：因评估耗时长，大规模RL应用较少。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="py-8 text-center border-t border-slate-700">
+        <p class="text-gray-400">
+            "DeepSeek-R1" 是大模型推理能力提升的重要探索，为社区贡献了宝贵的模型与经验。
+        </p>
+    </footer>
+
+    <script>
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['AIME 2024 (Pass@1)', 'Codeforces (Percentile)', 'GPQA Diamond (Pass@1)', 'MATH-500 (Pass@1)', 'MMLU (Pass@1)', 'SWE-bench Verified (Resolved)'],
+                datasets: [{
+                    label: 'DeepSeek-R1',
+                    data: [79.8, 96.3, 71.5, 97.3, 90.8, 49.2],
+                    backgroundColor: 'rgba(56, 189, 248, 0.7)', // sky-500
+                    borderColor: 'rgba(14, 165, 233, 1)',     // sky-600
+                    borderWidth: 1
+                }, {
+                    label: 'OpenAI-01-1217',
+                    data: [79.2, 96.6, 75.7, 96.4, 91.8, 48.9],
+                    backgroundColor: 'rgba(244, 114, 182, 0.7)', // pink-400
+                    borderColor: 'rgba(236, 72, 153, 1)',      // pink-500
+                    borderWidth: 1
+                }, {
+                    label: 'DeepSeek-R1-32B (Distilled)',
+                    data: [72.6, null, 62.1, 94.3, null, null], // Some values may not be directly in fig 1 for all benchmarks, or null if not relevant comparison point for that dataset
+                    backgroundColor: 'rgba(163, 230, 53, 0.7)', // lime-400
+                    borderColor: 'rgba(132, 204, 22, 1)',      // lime-500
+                    borderWidth: 1,
+                    hidden: true // Optionally hide less primary comparisons by default
+                },
+                 {
+                    label: 'OpenAI-01-mini',
+                    data: [63.6, 93.4, 60.0, 90.0, 85.2, 41.6],
+                    backgroundColor: 'rgba(251, 146, 60, 0.7)', // orange-400
+                    borderColor: 'rgba(249, 115, 22, 1)',      // orange-500
+                    borderWidth: 1,
+                    hidden: true
+                }
+              ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'DeepSeek-R1 关键基准性能对比 (Accuracy / Percentile %)',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        },
+                        color: '#e5e7eb' // gray-200
+                    },
+                    legend: {
+                        labels: {
+                            color: '#d1d5db' // gray-300
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100, // Assuming percentage or percentile
+                        ticks: {
+                            color: '#9ca3af', // gray-400
+                             stepSize: 10
+                        },
+                        grid: {
+                            color: 'rgba(71, 85, 105, 0.5)' // slate-600
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#9ca3af' // gray-400
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek-R1 Research Brief</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&family=Roboto+Condensed:wght@300;400;700&display=swap');
+
+        :root {
+            --primary-color: #0A2647; /* Deep Blue */
+            --secondary-color: #144272; /* Medium Blue */
+            --accent-color: #205295; /* Lighter Blue */
+            --highlight-color: #2C74B3; /* Brightest Blue/Tealish */
+            --text-color: #E0E0E0; /* Light Gray for text on dark backgrounds */
+            --bg-color: #07192D; /* Very Dark Blue Background */
+            --card-bg-color: #0D2A4F; /* Slightly lighter card background */
+            --border-color: #1B3A5F;
+            --font-primary: 'Titillium Web', sans-serif;
+            --font-secondary: 'Roboto Condensed', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.7;
+            font-size: 17px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: #FFFFFF;
+            padding: 40px 0 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--highlight-color);
+        }
+
+        header h1 {
+            font-family: var(--font-primary);
+            font-weight: 700;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: #B0C4DE;
+            margin-bottom: 5px;
+        }
+
+        header .date-tag {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .section {
+            background-color: var(--card-bg-color);
+            margin: 25px 0;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+        }
+
+        .section h2 {
+            font-family: var(--font-secondary);
+            font-weight: 700;
+            font-size: 2em;
+            color: var(--highlight-color);
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .section h3 {
+            font-family: var(--font-secondary);
+            font-weight: 600;
+            font-size: 1.5em;
+            color: var(--highlight-color);
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p, li {
+            margin-bottom: 15px;
+            color: #C0C0C0; /* Slightly lighter than main text for better contrast */
+        }
+
+        strong {
+            color: var(--highlight-color);
+            font-weight: 600;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            padding-left: 25px;
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        ul li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: var(--highlight-color);
+            font-size: 1.2em;
+        }
+
+        .key-metric {
+            background-color: var(--accent-color);
+            color: #FFF;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .key-metric span {
+            display: block;
+            font-size: 0.8em;
+            font-weight: 400;
+            color: #E0E0E0;
+        }
+
+        /* --- Table Styles --- */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--accent-color);
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--secondary-color);
+        }
+        tr:nth-child(odd) {
+            background-color: #0E2D57; /* slightly darker odd rows */
+        }
+
+        td.highlight-value {
+            font-weight: 700;
+            color: var(--highlight-color);
+        }
+        td.model-deepseek {
+            background-color: #184E84; /* Highlight DeepSeek models a bit */
+        }
+
+
+        /* --- Bar Chart Styles (Figure 1 data) --- */
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+        }
+
+        .benchmark-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .benchmark-group h4 {
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+            color: #FFF;
+            font-family: var(--font-secondary);
+        }
+
+        .bar-wrapper {
+            display: flex;
+            align-items: flex-end;
+            gap: 5px; /* Reduced gap for more compact bar display */
+            height: 200px; /* Fixed height for alignment */
+        }
+
+        .bar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1; /* Make items take equal width */
+            min-width: 60px; /* Ensure readability */
+        }
+
+        .bar {
+            width: 80%; /* Percentage of .bar-item width */
+            max-width: 50px; /* Cap max width */
+            background-color: var(--highlight-color);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: height 0.5s ease-out;
+        }
+
+        .bar::after {
+            content: attr(data-value) "%";
+            position: absolute;
+            top: -20px; /* Position value above bar */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8em;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .bar-label {
+            font-size: 0.75em;
+            color: #B0C4DE;
+            text-align: center;
+            margin-top: 5px;
+            word-wrap: break-word; /* Ensure long labels wrap */
+        }
+
+        /* Model specific colors for chart */
+        .bar.deepseek-r1 { background-color: #2C74B3; } /* Brightest Blue */
+        .bar.openai-01-1217 { background-color: #5DA3FA; } /* Lighter Blue */
+        .bar.deepseek-r1-32b { background-color: #4B8BBE; } /* Medium Blue */
+        .bar.openai-01-mini { background-color: #7BB4E3; } /* Pale Blue */
+        .bar.deepseek-v3 { background-color: #A2CDED; } /* Lightest Blue */
+
+        /* For Codeforces - using Percentile not percentage height */
+         .bar.codeforces::after {
+            content: attr(data-value); /* Show percentile value */
+        }
+
+
+        .two-col {
+            display: flex;
+            gap: 20px;
+        }
+        .two-col > div {
+            flex: 1;
+        }
+
+        .quote-block {
+            background-color: var(--secondary-color);
+            border-left: 5px solid var(--highlight-color);
+            padding: 20px;
+            margin: 20px 0;
+            font-style: italic;
+            color: #D0D0D0;
+            border-radius: 0 8px 8px 0;
+        }
+        .quote-block p { margin-bottom: 0; }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 30px;
+            background-color: var(--primary-color);
+            color: #A0A0A0;
+            font-size: 0.9em;
+            border-top: 3px solid var(--accent-color);
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.2em; }
+            .section h2 { font-size: 1.6em; }
+            .two-col { flex-direction: column; }
+            .bar-wrapper { height: 150px; } /* Adjust bar chart height for mobile */
+            .bar::after { font-size: 0.7em; top: -18px; }
+            .bar-label { font-size: 0.7em; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>DeepSeek-R1: Incentivizing Reasoning in LLMs</h1>
+            <p>via Reinforcement Learning</p>
+            <p class="org">DeepSeek-AI | research@deepseek.com</p>
+            <span class="date-tag">arXiv:2501.12948v1 [cs.CL] 22 Jan 2025</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="abstract">
+            <h2>Abstract Summary</h2>
+            <p>DeepSeek-AI introduces its first-generation reasoning models: <strong>DeepSeek-R1-Zero</strong> and <strong>DeepSeek-R1</strong>.
+            DeepSeek-R1-Zero, trained via large-scale reinforcement learning (RL) without supervised fine-tuning (SFT) as a preliminary step, demonstrates remarkable emergent reasoning capabilities but faces challenges like poor readability and language mixing.
+            To address this, DeepSeek-R1 incorporates multi-stage training and cold-start data before RL, achieving performance comparable to OpenAI-01-1217 on reasoning tasks. The paper also highlights the open-sourcing of DeepSeek-R1-Zero, DeepSeek-R1, and six distilled dense models (1.5B to 70B) based on Qwen and Llama.</p>
+        </section>
+
+        <section class="models-overview">
+            <h2>Core Models Introduced</h2>
+            <div class="two-col">
+                <div>
+                    <h3>DeepSeek-R1-Zero</h3>
+                    <ul>
+                        <li>Pure RL approach on base model (DeepSeek-V3-Base).</li>
+                        <li>No SFT pre-training for reasoning.</li>
+                        <li>Demonstrates strong emergent reasoning (e.g., AIME score from 15.6% to 71.0% Pass@1, 86.7% with majority voting).</li>
+                        <li>Challenges: Poor readability, language mixing.</li>
+                        <li>Algorithm: Group Relative Policy Optimization (GRPO).</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>DeepSeek-R1</h3>
+                    <ul>
+                        <li>Multi-stage training pipeline building upon R1-Zero's insights.</li>
+                        <li>Incorporates:
+                            <ol>
+                                <li><strong>Cold Start:</strong> Small SFT with high-quality long CoT data.</li>
+                                <li><strong>Reasoning-oriented RL:</strong> Similar to R1-Zero, with language consistency rewards.</li>
+                                <li><strong>Rejection Sampling & SFT:</strong> Creates new SFT data from RL checkpoint + general domain data.</li>
+                                <li><strong>RL for all Scenarios:</strong> Aligns for helpfulness/harmlessness.</li>
+                            </ol>
+                        </li>
+                        <li>Achieves performance comparable to OpenAI-01-1217.</li>
+                        <li>Improved readability and reduced language mixing.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="performance-highlights">
+            <h2>Benchmark Performance of DeepSeek-R1 (Figure 1)</h2>
+            <p>This chart visualizes the accuracy/percentile scores for DeepSeek-R1 against several strong baselines on key reasoning benchmarks.</p>
+            <div class="chart-container">
+                <div class="benchmark-group">
+                    <h4>AIME 2024 (Pass@1, %)</h4>
+                    <div class="bar-wrapper">
+                        <div class="bar-item"><div class="bar deepseek-r1" style="height: 79.8%;" data-value="79.8"></div><div class="bar-label">DeepSeek-R1</div></div>
+                        <div class="bar-item"><div class="bar openai-01-1217" style="height: 79.2%;" data-value="79.2"></div><div class="bar-label">OpenAI-01-1217</div></div>
+                        <div class="bar-item"><div class="bar deepseek-r1-32b" style="height: 72.6%;" data-value="72.6"></div><div class="bar-label">DS-R1-32B</div></div>
+                        <div class="bar-item"><div class="bar openai-01-mini" style="height: 63.6%;" data-value="63.6"></div><div class="bar-label">OpenAI-01-mini</div></div>
+                        <div class="bar-item"><div class="bar deepseek-v3" style="height: 39.2%;" data-value="39.2"></div><div class="bar-label">DeepSeek-V3</div></div>
+                    </div>
+                </div>
+
+                <div class="benchmark-group">
+                    <h4>Codeforces (Percentile, %)</h4>
+                    <div class="bar-wrapper">
+                        <div class="bar-item"><div class="bar deepseek-r1 codeforces" style="height: 96.3%;" data-value="96.3"></div><div class="bar-label">DeepSeek-R1</div></div>
+                        <div class="bar-item"><div class="bar openai-01-1217 codeforces" style="height: 96.6%;" data-value="96.6"></div><div class="bar-label">OpenAI-01-1217</div></div>
+                        <div class="bar-item"><div class="bar deepseek-r1-32b codeforces" style="height: 90.6%;" data-value="90.6"></div><div class="bar-label">DS-R1-32B</div></div>
+                        <div class="bar-item"><div class="bar openai-01-mini codeforces" style="height: 93.4%;" data-value="93.4"></div><div class="bar-label">OpenAI-01-mini</div></div>
+                        <div class="bar-item"><div class="bar deepseek-v3 codeforces" style="height: 58.7%;" data-value="58.7"></div><div class="bar-label">DeepSeek-V3</div></div>
+                    </div>
+                </div>
+
+                <div class="benchmark-group">
+                    <h4>GPQA Diamond (Pass@1, %)</h4>
+                    <div class="bar-wrapper">
+                        <div class="bar-item"><div class="bar deepseek-r1" style="height: 71.5%;" data-value="71.5"></div><div class="bar-label">DeepSeek-R1</div></div>
+                        <div class="bar-item"><div class="bar openai-01-1217" style="height: 75.7%;" data-value="75.7"></div><div class="bar-label">OpenAI-01-1217</div></div>
+                        <div class="bar-item"><div class="bar deepseek-r1-32b" style="height: 62.1%;" data-value="62.1"></div><div class="bar-label">DS-R1-32B</div></div>
+                        <div class="bar-item"><div class="bar openai-01-mini" style="height: 60.0%;" data-value="60.0"></div><div class="bar-label">OpenAI-01-mini</div></div>
+                        <div class="bar-item"><div class="bar deepseek-v3" style="height: 59.1%;" data-value="59.1"></div><div class="bar-label">DeepSeek-V3</div></div>
+                    </div>
+                </div>
+
+                <div class="benchmark-group">
+                    <h4>MATH-500 (Pass@1, %)</h4>
+                    <div class="bar-wrapper">
+                        <div class="bar-item"><div class="bar deepseek-r1" style="height: 97.3%;" data-value="97.3"></div><div class="bar-label">DeepSeek-R1</div></div>
+                        <div class="bar-item"><div class="bar openai-01-1217" style="height: 96.4%;" data-value="96.4"></div><div class="bar-label">OpenAI-01-1217</div></div>
+                        <div class="bar-item"><div class="bar deepseek-r1-32b" style="height: 94.3%;" data-value="94.3"></div><div class="bar-label">DS-R1-32B</div></div>
+                        <div class="bar-item"><div class="bar openai-01-mini" style="height: 90.0%;" data-value="90.0"></div><div class="bar-label">OpenAI-01-mini</div></div>
+                        <div class="bar-item"><div class="bar deepseek-v3" style="height: 90.2%;" data-value="90.2"></div><div class="bar-label">DeepSeek-V3</div></div>
+                    </div>
+                </div>
+
+                <div class="benchmark-group">
+                    <h4>MMLU (Pass@1, %)</h4>
+                    <div class="bar-wrapper">
+                        <div class="bar-item"><div class="bar deepseek-r1" style="height: 90.8%;" data-value="90.8"></div><div class="bar-label">DeepSeek-R1</div></div>
+                        <div class="bar-item"><div class="bar openai-01-1217" style="height: 91.8%;" data-value="91.8"></div><div class="bar-label">OpenAI-01-1217</div></div>
+                        <!-- R1-32B MMLU not in fig1, assumed N/A here for fig1 fidelity -->
+                        <div class="bar-item"><div class="bar openai-01-mini" style="height: 87.4%;" data-value="87.4"></div><div class="bar-label">OpenAI-01-mini</div></div>
+                        <div class="bar-item"><div class="bar deepseek-v3" style="height: 88.5%;" data-value="88.5"></div><div class="bar-label">DeepSeek-V3</div></div>
+                    </div>
+                </div>
+                 <div class="benchmark-group">
+                    <h4>SWE-bench Verified (Resolved, %)</h4>
+                    <div class="bar-wrapper">
+                        <div class="bar-item"><div class="bar deepseek-r1" style="height: 49.2%;" data-value="49.2"></div><div class="bar-label">DeepSeek-R1</div></div>
+                        <div class="bar-item"><div class="bar openai-01-1217" style="height: 48.9%;" data-value="48.9"></div><div class="bar-label">OpenAI-01-1217</div></div>
+                        <div class="bar-item"><div class="bar deepseek-r1-32b" style="height: 41.6%;" data-value="41.6"></div><div class="bar-label">DS-R1-32B</div></div>
+                        <div class="bar-item"><div class="bar openai-01-mini" style="height: 42.0%;" data-value="42.0"></div><div class="bar-label">OpenAI-01-mini</div></div>
+                        <div class="bar-item"><div class="bar deepseek-v3" style="height: 36.8%;" data-value="36.8"></div><div class="bar-label">DeepSeek-V3</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="key-contributions">
+            <h2>Key Contributions & Innovations</h2>
+            <ul>
+                <li><strong>RL on Base Model (DeepSeek-R1-Zero):</strong> First open research validating purely RL-driven reasoning capability enhancement in LLMs without SFT pre-training, showcasing self-verification and reflection.</li>
+                <li><strong>DeepSeek-R1 Pipeline:</strong> A novel multi-stage pipeline combining two RL stages (discovery & human preference alignment) and two SFT stages (seeding reasoning & non-reasoning skills).</li>
+                <li><strong>Powerful Distillation:</strong> Demonstrates effective distillation of reasoning patterns from larger models (DeepSeek-R1) to smaller ones, achieving superior performance compared to RL on small models.</li>
+                <li><strong>Open Sourcing:</strong> Release of DeepSeek-R1-Zero, DeepSeek-R1, and six distilled dense models (1.5B to 70B) to benefit the research community.</li>
+            </ul>
+            <div class="two-col">
+                <div class="key-metric">79.8% Pass@1 AIME 2024 <span>(DeepSeek-R1, slightly surpassing OpenAI-01-1217)</span></div>
+                <div class="key-metric">97.3% Pass@1 MATH-500 <span>(DeepSeek-R1, on par with OpenAI-01-1217)</span></div>
+            </div>
+             <div class="two-col">
+                <div class="key-metric">96.3% Codeforces Percentile <span>(DeepSeek-R1, expert-level)</span></div>
+                <div class="key-metric">90.8% MMLU Pass@1 <span>(DeepSeek-R1, competitive knowledge)</span></div>
+            </div>
+        </section>
+
+        <section class="detailed-performance">
+            <h2>DeepSeek-R1: Detailed Performance (selected, Table 4)</h2>
+             <p>DeepSeek-R1 (MoE, 37B Activated, 671B Total Params) compared against other leading models. Scores are Pass@1 or equivalent where specified.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Benchmark (Metric)</th>
+                            <th>Claude-3.5-Sonnet-1022</th>
+                            <th>GPT-4o-0513</th>
+                            <th>DeepSeek-V3</th>
+                            <th>OpenAI-o1-mini</th>
+                            <th>OpenAI-o1-1217</th>
+                            <th>DeepSeek-R1</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MMLU (Pass@1)</td>
+                            <td>88.3</td>
+                            <td>87.2</td>
+                            <td class="model-deepseek">88.5</td>
+                            <td>85.2</td>
+                            <td>91.8</td>
+                            <td class="highlight-value model-deepseek">90.8</td>
+                        </tr>
+                         <tr>
+                            <td>MMLU-Pro (EM)</td>
+                            <td>78.0</td>
+                            <td>72.6</td>
+                            <td class="model-deepseek">75.9</td>
+                            <td>80.3</td>
+                            <td>-</td>
+                            <td class="highlight-value model-deepseek">84.0</td>
+                        </tr>
+                        <tr>
+                            <td>GPQA Diamond (Pass@1)</td>
+                            <td>65.0</td>
+                            <td>49.9</td>
+                            <td class="model-deepseek">59.1</td>
+                            <td>60.0</td>
+                            <td>75.7</td>
+                            <td class="highlight-value model-deepseek">71.5</td>
+                        </tr>
+                        <tr>
+                            <td>AIME 2024 (Pass@1)</td>
+                            <td>16.0</td>
+                            <td>9.3</td>
+                            <td class="model-deepseek">39.2</td>
+                            <td>63.6</td>
+                            <td>79.2</td>
+                            <td class="highlight-value model-deepseek">79.8</td>
+                        </tr>
+                        <tr>
+                            <td>MATH-500 (Pass@1)</td>
+                            <td>78.3</td>
+                            <td>74.6</td>
+                            <td class="model-deepseek">90.2</td>
+                            <td>90.0</td>
+                            <td>96.4</td>
+                            <td class="highlight-value model-deepseek">97.3</td>
+                        </tr>
+                        <tr>
+                            <td>Codeforces (Percentile)</td>
+                            <td>20.3 (717 Rating)</td>
+                            <td>23.6 (759 Rating)</td>
+                            <td class="model-deepseek">58.7 (1134 Rating)</td>
+                            <td>93.4 (1820 Rating)</td>
+                            <td>96.6 (2061 Rating)</td>
+                            <td class="highlight-value model-deepseek">96.3 (2029 Rating)</td>
+                        </tr>
+                        <tr>
+                            <td>LiveCodeBench (Pass@1-COT)</td>
+                            <td>38.9</td>
+                            <td>32.9</td>
+                            <td class="model-deepseek">36.2</td>
+                            <td>53.8</td>
+                            <td>63.4</td>
+                            <td class="highlight-value model-deepseek">65.9</td>
+                        </tr>
+                         <tr>
+                            <td>SWE Verified (Resolved)</td>
+                            <td>50.8</td>
+                            <td>38.8</td>
+                            <td class="model-deepseek">42.0</td>
+                            <td>41.6</td>
+                            <td>48.9</td>
+                            <td class="highlight-value model-deepseek">49.2</td>
+                        </tr>
+                        <tr>
+                            <td>AlpacaEval2.0 (LC-winrate)</td>
+                            <td>52.0</td>
+                            <td>51.1</td>
+                            <td class="model-deepseek">70.0</td>
+                            <td>57.8</td>
+                            <td>-</td>
+                            <td class="highlight-value model-deepseek">87.6</td>
+                        </tr>
+                         <tr>
+                            <td>ArenaHard (GPT-4-1106)</td>
+                            <td>85.2</td>
+                            <td>80.4</td>
+                            <td class="model-deepseek">85.5</td>
+                            <td>92.0</td>
+                            <td>-</td>
+                            <td class="highlight-value model-deepseek">92.3</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="distillation-insights">
+            <h2>Distillation: Smaller Models, Powerful Reasoning</h2>
+            <p>DeepSeek-R1's reasoning capabilities were distilled into smaller dense models using ~800k SFT samples. The results demonstrate significant improvements for these smaller models, often surpassing larger or more specialized models.</p>
+            <h3>Distilled Model Performance (selected, Table 5)</h3>
+            <div class="table-wrapper">
+                 <table>
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>AIME 2024 (pass@1)</th>
+                            <th>MATH-500 (pass@1)</th>
+                            <th>GPQA Diamond (pass@1)</th>
+                            <th>LiveCode Bench (pass@1)</th>
+                            <th>CodeForces (rating)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>GPT-4o-0513</td>
+                            <td>9.3</td>
+                            <td>74.6</td>
+                            <td>49.9</td>
+                            <td>32.9</td>
+                            <td>759</td>
+                        </tr>
+                        <tr>
+                            <td>OpenAI-o1-mini</td>
+                            <td>63.6</td>
+                            <td>90.0</td>
+                            <td>60.0</td>
+                            <td>53.8</td>
+                            <td>1820</td>
+                        </tr>
+                        <tr>
+                            <td>QwQ-32B-Preview</td>
+                            <td>50.0</td>
+                            <td>90.6</td>
+                            <td>54.5</td>
+                            <td>41.9</td>
+                            <td>1316</td>
+                        </tr>
+                        <tr>
+                            <td class="model-deepseek">DS-R1-Distill-Qwen-1.5B</td>
+                            <td class="highlight-value">28.9</td>
+                            <td class="highlight-value">83.9</td>
+                            <td>33.8</td>
+                            <td>16.9</td>
+                            <td>954</td>
+                        </tr>
+                        <tr>
+                            <td class="model-deepseek">DS-R1-Distill-Qwen-7B</td>
+                            <td class="highlight-value">55.5</td>
+                            <td class="highlight-value">92.8</td>
+                            <td>49.1</td>
+                            <td>37.6</td>
+                            <td>1189</td>
+                        </tr>
+                        <tr>
+                            <td class="model-deepseek">DS-R1-Distill-Qwen-14B</td>
+                            <td class="highlight-value">69.7</td>
+                            <td class="highlight-value">93.9</td>
+                            <td>59.1</td>
+                            <td>53.1</td>
+                            <td>1481</td>
+                        </tr>
+                        <tr>
+                            <td class="model-deepseek">DS-R1-Distill-Qwen-32B</td>
+                            <td class="highlight-value">72.6</td>
+                            <td class="highlight-value">94.3</td>
+                            <td>62.1</td>
+                            <td>57.2</td>
+                            <td>1691</td>
+                        </tr>
+                         <tr>
+                            <td class="model-deepseek">DS-R1-Distill-Llama-70B</td>
+                            <td class="highlight-value">70.0</td>
+                            <td class="highlight-value">94.5</td>
+                            <td>65.2</td>
+                            <td>57.5</td>
+                            <td>1633</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Notably, <strong>DeepSeek-R1-Distill-Qwen-14B</strong> surpasses QwQ-32B-Preview, and <strong>DeepSeek-R1-Distill-Qwen-32B</strong> significantly exceeds OpenAI-o1-mini on most benchmarks.</p>
+        </section>
+
+        <section class="methodology-and-findings">
+            <h2>Key Methodological Insights & Findings</h2>
+            <div class="two-col">
+                <div>
+                    <h3>Self-Evolution and "Aha Moment"</h3>
+                    <p>During the RL process for DeepSeek-R1-Zero, the model spontaneously developed sophisticated reasoning behaviors:</p>
+                    <ul>
+                        <li><strong>Increased Thinking Time:</strong> Average response length grew significantly, indicating deeper processing.</li>
+                        <li><strong>Emergent Reflection:</strong> The model learned to revisit and re-evaluate its previous steps.</li>
+                    </ul>
+                    <div class="quote-block">
+                        <p>"Wait, wait. Wait. That's an aha moment I can flag here. Let's reevaluate this step-by-step..." - Example of DeepSeek-R1-Zero's emergent rethinking during problem-solving.</p>
+                    </div>
+                </div>
+                <div>
+                    <h3>Distillation vs. Direct RL on Smaller Models</h3>
+                    <p>Training Qwen-32B-Base directly with RL (DeepSeek-R1-Zero-Qwen-32B) achieved performance on par with QwQ-32B-Preview. However, distilling DeepSeek-R1 into Qwen-32B (DeepSeek-R1-Distill-Qwen-32B) yielded significantly better results across all benchmarks.</p>
+                    <ul>
+                        <li><strong>Distillation is More Effective:</strong> Suggests reasoning patterns from larger, more capable models are crucial.</li>
+                        <li><strong>Limits of RL on Smaller Models:</strong> May require immense computation or hit capability ceilings.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Unsuccessful Attempts (Lessons Learned)</h3>
+            <ul>
+                <li><strong>Process Reward Models (PRM):</strong> Challenging to define fine-grained steps, difficult intermediate step verification, and prone to reward hacking. Overhead limits advantages in large-scale RL.</li>
+                <li><strong>Monte Carlo Tree Search (MCTS):</strong> Exponentially large search space for token generation and difficulty in training a fine-grained value model make iterative improvement via self-search challenging.</li>
+            </ul>
+        </section>
+
+        <section class="limitations-future-work">
+            <h2>Limitations & Future Work</h2>
+            <ul>
+                <li><strong>General Capability:</strong> Current DeepSeek-R1 lags behind DeepSeek-V3 in areas like function calling, multi-turn, and complex role-playing. Future work will explore leveraging long CoT for these.</li>
+                <li><strong>Language Mixing:</strong> Primarily optimized for Chinese and English; can mix languages in other contexts.</li>
+                <li><strong>Prompting Engineering:</strong> Sensitive to prompts; few-shot prompting can degrade performance. Zero-shot with clear problem description is recommended.</li>
+                <li><strong>Software Engineering Tasks:</strong> RL not extensively applied due to long evaluation times. Future versions aim to improve this via rejection sampling or asynchronous evaluations.</li>
+            </ul>
+        </section>
+
+        <section class="open-source">
+            <h2>Open Source Commitment</h2>
+            <p>DeepSeek-AI is open-sourcing DeepSeek-R1-Zero, DeepSeek-R1, and six distilled dense models (1.5B, 7B, 8B, 14B, 32B, 70B) based on Qwen and Llama. This significant contribution aims to empower the research community to build upon these advancements.</p>
+        </section>
+    </div>
+
+    <footer>
+        <p>© 2025 DeepSeek-AI. Report generated based on arXiv:2501.12948v1.</p>
+    </footer>
+
+</body>
+</html>

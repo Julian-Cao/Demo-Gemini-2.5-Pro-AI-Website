@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek-R1 Paper Interpretation</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Source Sans Pro', sans-serif;
+            /* Ensure Source Sans Pro is loaded or fallback */
+            /* @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap'); */
+        }
+        .slide {
+            width: 1280px; /* Standard slide width */
+            min-height: 720px; /* Standard slide height */
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4ecf7 100%);
+            overflow: hidden;
+            position: relative;
+            margin: 20px auto; /* Center slide for viewing */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .deepseek-blue-accent {
+            background-color: #104cad; /* A blue from DeepSeek logo, can adjust */
+            height: 8px;
+            width: 100px; /* Longer accent */
+        }
+        .bg-pattern-dots {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40%; /* Adjusted width */
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(16, 76, 173, 0.05) 0%, rgba(16, 76, 173, 0.05) 2px, transparent 2px),
+                radial-gradient(circle at 50% 60%, rgba(16, 76, 173, 0.06) 0%, rgba(16, 76, 173, 0.06) 3px, transparent 3px),
+                radial-gradient(circle at 80% 30%, rgba(16, 76, 173, 0.04) 0%, rgba(16, 76, 173, 0.04) 2px, transparent 2px),
+                radial-gradient(circle at 30% 80%, rgba(16, 76, 173, 0.07) 0%, rgba(16, 76, 173, 0.07) 3px, transparent 3%);
+            background-size: 50px 50px; /* Control dot density */
+            opacity: 0.7;
+            z-index: 0;
+        }
+        .content-area {
+            position: relative;
+            z-index: 1;
+        }
+        .info-card {
+            border-left: 4px solid #104cad; /* DeepSeek blue */
+            background-color: rgba(255, 255, 255, 0.75);
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .footer-text {
+            font-size: 0.8rem;
+            color: #555;
+        }
+        .table-header-bg {
+            background-color: #e9effa; /* Lighter blue for table headers */
+        }
+        .table-cell-padding {
+            padding: 0.5rem 0.75rem;
+        }
+        h1, h2, h3, h4 {
+            color: #1e293b; /* Dark slate gray for headings */
+        }
+        p, li, span {
+            color: #334155; /* Slightly lighter for body text */
+        }
+        /* Ensure Source Sans Pro is loaded if not available locally */
+        @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap');
+    </style>
+</head>
+<body>
+    <div class="slide flex flex-col">
+        <div class="bg-pattern-dots"></div>
+        <div class="content-area px-16 py-12 flex flex-col h-full">
+            <!-- Header Section -->
+            <div class="mb-4">
+                <img src="https://www.deepseek.com/static/media/deepseekLog.53f434e387c918ac78920762a8de979b.svg" alt="DeepSeek Logo" class="h-10 mb-2">
+                <h1 class="text-4xl font-bold mb-1">DeepSeek-R1: Incentivizing Reasoning Capability in LLMs</h1>
+                <div class="flex items-center">
+                    <div class="deepseek-blue-accent mr-4"></div>
+                    <h2 class="text-2xl text-gray-700 font-medium">via Reinforcement Learning</h2>
+                </div>
+            </div>
+
+            <!-- Paper Meta Information -->
+            <div class="mb-6 bg-white bg-opacity-60 p-4 rounded-lg shadow-sm text-sm">
+                <div class="grid grid-cols-3 gap-4">
+                    <p class="flex items-center">
+                        <i class="fas fa-users text-blue-700 mr-2"></i><span class="font-semibold">Authors:</span> DeepSeek-AI
+                    </p>
+                    <p class="flex items-center">
+                        <i class="fas fa-calendar-alt text-blue-700 mr-2"></i><span class="font-semibold">Date:</span> January 22, 2025
+                    </p>
+                    <p class="flex items-center">
+                        <i class="fas fa-file-alt text-blue-700 mr-2"></i><span class="font-semibold">arXiv:</span> 2501.12948v1 [cs.CL]
+                    </p>
+                </div>
+            </div>
+
+            <!-- Abstract Summary -->
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-2">Core Idea</h3>
+                <p class="text-gray-700 leading-relaxed text-base">
+                    DeepSeek-AI introduces its first-generation reasoning models: <strong>DeepSeek-R1-Zero</strong>, trained via large-scale reinforcement learning (RL) without supervised fine-tuning (SFT) pre-step, and <strong>DeepSeek-R1</strong>. While R1-Zero demonstrates remarkable emergent reasoning, it faces challenges like poor readability. DeepSeek-R1 addresses this by incorporating multi-stage training and cold-start data before RL, achieving performance comparable to leading models like OpenAI-01-1217. The paper also details open-sourcing R1-Zero, R1, and six dense models (1.5B to 70B) distilled from R1.
+                </p>
+            </div>
+
+            <!-- Key Innovations / Contributions -->
+            <h3 class="text-xl font-semibold mb-3">Key Innovations & Contributions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="info-card p-3 rounded">
+                    <div class="flex items-center mb-1">
+                        <i class="fas fa-brain text-blue-600 mr-2 text-lg"></i>
+                        <h4 class="text-md font-semibold">Pure RL for Reasoning (R1-Zero)</h4>
+                    </div>
+                    <p class="text-sm text-gray-600">Demonstrates that reasoning capabilities can be significantly incentivized via RL directly on a base model, without SFT, leading to emergent behaviors like self-verification and long Chain-of-Thought (CoT) generation.</p>
+                </div>
+                <div class="info-card p-3 rounded">
+                    <div class="flex items-center mb-1">
+                        <i class="fas fa-cogs text-green-600 mr-2 text-lg"></i>
+                        <h4 class="text-md font-semibold">Multi-Stage RL Pipeline (R1)</h4>
+                    </div>
+                    <p class="text-sm text-gray-600">Introduces a comprehensive pipeline incorporating cold-start SFT, reasoning-oriented RL, rejection sampling SFT, and human-preference RL to enhance reasoning and usability.</p>
+                </div>
+                <div class="info-card p-3 rounded">
+                    <div class="flex items-center mb-1">
+                        <i class="fas fa-compress-arrows-alt text-purple-600 mr-2 text-lg"></i>
+                        <h4 class="text-md font-semibold">Effective Distillation</h4>
+                    </div>
+                    <p class="text-sm text-gray-600">Shows that reasoning patterns from larger models (DeepSeek-R1) can be effectively distilled into smaller dense models, achieving strong performance that surpasses direct RL on those smaller models.</p>
+                </div>
+                <div class="info-card p-3 rounded">
+                    <div class="flex items-center mb-1">
+                        <i class="fas fa-gift text-yellow-500 mr-2 text-lg"></i>
+                        <h4 class="text-md font-semibold">Open-Source Models</h4>
+                    </div>
+                    <p class="text-sm text-gray-600">Contributes R1-Zero, R1, and six distilled dense models (1.5B to 70B based on Qwen and Llama) to the research community, fostering further innovation.</p>
+                </div>
+            </div>
+
+            <!-- Performance Snapshot (Conceptual from Figure 1) -->
+            <div class="mb-6">
+                 <h3 class="text-xl font-semibold mb-2">Performance Highlights (vs OpenAI-01-1217)</h3>
+                 <div class="bg-white bg-opacity-60 p-3 rounded-lg shadow-sm">
+                    <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                        <li><strong>AIME 2024 (Pass@1):</strong> DeepSeek-R1 (79.8%) slightly surpasses OpenAI-01-1217 (79.2%).</li>
+                        <li><strong>MATH-500 (Pass@1):</strong> DeepSeek-R1 (97.3%) on par with OpenAI-01-1217 (96.4%).</li>
+                        <li><strong>Codeforces (Percentile):</strong> DeepSeek-R1 (96.3%) slightly below OpenAI-01-1217 (96.6%).</li>
+                        <li><strong>MMLU (Pass@1):</strong> DeepSeek-R1 (90.8%) slightly below OpenAI-01-1217 (91.8%).</li>
+                        <li><strong>GPQA Diamond (Pass@1):</strong> DeepSeek-R1 (71.5%) below OpenAI-01-1217 (75.7%).</li>
+                    </ul>
+                    <p class="text-xs text-gray-500 mt-2 italic">Note: Data extracted from Figure 1 in the paper. DeepSeek-R1 shows strong competitive performance across diverse reasoning benchmarks.</p>
+                 </div>
+            </div>
+
+            <!-- Significance -->
+            <div class="mt-auto text-center">
+                 <p class="footer-text">
+                    This work significantly advances the understanding and development of reasoning capabilities in LLMs through RL,
+                    offering powerful open-source tools and novel training methodologies.
+                </p>
+                <p class="text-xs text-gray-400 mt-1">DeepSeek-R1 - January 2025</p>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

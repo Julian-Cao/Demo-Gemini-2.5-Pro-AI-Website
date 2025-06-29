@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek-R1: Advancing LLM Reasoning with Reinforcement Learning</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;700&display=swap');
+
+        :root {
+            --primary-color: #0D1B2A; /* Deep Blue */
+            --secondary-color: #1B263B; /* Darker Blue */
+            --accent-color: #415A77; /* Mid Blue */
+            --highlight-color: #778DA9; /* Lighter Blue */
+            --text-color: #E0E1DD; /* Off-White */
+            --gold-accent: #FFD700; /* Gold for emphasis */
+            --border-radius: 12px;
+            --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Roboto', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+            font-size: 17px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            border-bottom: 3px solid var(--gold-accent);
+        }
+
+        .header h1 {
+            font-family: var(--font-heading);
+            font-size: 3.5em;
+            color: var(--text-color);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .header .subtitle {
+            font-size: 1.4em;
+            color: var(--highlight-color);
+            margin-bottom: 20px;
+        }
+
+        .header .authors {
+            font-size: 1.1em;
+            color: var(--accent-color);
+        }
+
+        .section {
+            background-color: var(--secondary-color);
+            margin: 30px 0;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .section h2 {
+            font-family: var(--font-heading);
+            font-size: 2.5em;
+            color: var(--highlight-color);
+            margin-top: 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent-color);
+            display: inline-block;
+        }
+
+        .section h3 {
+            font-family: var(--font-heading);
+            font-size: 1.8em;
+            color: var(--highlight-color);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .key-takeaways ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .key-takeaways li {
+            padding: 12px 0 12px 35px;
+            position: relative;
+            font-size: 1.1em;
+            border-bottom: 1px dashed var(--accent-color);
+        }
+
+        .key-takeaways li:last-child {
+            border-bottom: none;
+        }
+
+        .key-takeaways li::before {
+            content: "\f005"; /* FontAwesome star icon */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: var(--gold-accent);
+            position: absolute;
+            left: 0;
+            top: 14px;
+            font-size: 1.2em;
+        }
+
+        .performance-highlight {
+            background-color: rgba(255, 215, 0, 0.1); /* Subtle gold background */
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            border: 1px solid var(--gold-accent);
+        }
+
+        .performance-highlight strong {
+            color: var(--gold-accent);
+        }
+
+        .aha-moment {
+            font-style: italic;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin: 25px 0;
+            border-left: 5px solid var(--gold-accent);
+        }
+        .aha-moment blockquote {
+            margin: 0;
+            padding: 0;
+            font-size: 1.05em;
+        }
+        .aha-moment p:first-child {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        th {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(129, 157, 194, 0.1); /* Lighter row stripe */
+        }
+
+        tr:hover {
+            background-color: rgba(119, 141, 169, 0.3);
+        }
+
+        .model-name {
+            font-weight: bold;
+            color: var(--highlight-color);
+        }
+
+        .value-good {
+            color: #A7D7C5; /* Light Green */
+        }
+
+        .value-excellent {
+            color: var(--gold-accent);
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 40px;
+            background-color: var(--secondary-color);
+            color: var(--accent-color);
+            font-size: 0.9em;
+            border-top: 2px solid var(--accent-color);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--gold-accent);
+            color: var(--primary-color);
+            padding: 12px 25px;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(255,215,0,0.3);
+        }
+        .cta-button:hover {
+            background-color: #FFC107; /* Slightly darker gold */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255,215,0,0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1>DeepSeek-R1</h1>
+        <p class="subtitle">Incentivizing Reasoning Capability in LLMs via Reinforcement Learning</p>
+        <p class="authors">DeepSeek-AI</p>
+        <p class="date">arXiv:2501.12948v1 [cs.CL] 22 Jan 2025</p>
+    </header>
+
+    <div class="container">
+        <section class="section key-takeaways">
+            <h2><i class="fas fa-lightbulb"></i> Executive Summary & Key Innovations</h2>
+            <p>DeepSeek-AI introduces DeepSeek-R1-Zero and DeepSeek-R1, groundbreaking models that significantly advance LLM reasoning capabilities through large-scale Reinforcement Learning (RL). This work demonstrates that RL can cultivate sophisticated reasoning behaviors even without preliminary Supervised Fine-Tuning (SFT), and further refinement with multi-stage training yields performance comparable to top-tier proprietary models.</p>
+            <ul>
+                <li><strong>Pure RL Power (DeepSeek-R1-Zero):</strong> Demonstrates remarkable reasoning capabilities emerging naturally from RL, achieving a 71.0% pass@1 on AIME 2024 (up from 15.6% base model) without SFT.</li>
+                <li><strong>Refined Excellence (DeepSeek-R1):</strong> Incorporates multi-stage training and cold-start data, addressing R1-Zero's challenges (e.g., readability) and achieving performance on par with OpenAI-o1-1217 on reasoning tasks.</li>
+                <li><strong>The "Aha Moment":</strong> Uncovered an intriguing self-correction and re-evaluation behavior in R1-Zero, showcasing the depth of learning through RL.</li>
+                <li><strong>Open-Source Contribution:</strong> DeepSeek-R1-Zero, DeepSeek-R1, and six distilled dense models (1.5B to 70B) are open-sourced, empowering the research community.</li>
+                <li><strong>Superior Distillation:</strong> Distilled smaller models from DeepSeek-R1 show exceptional performance, e.g., a 14B model outperforming many larger open-source models.</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2><i class="fas fa-brain"></i> The Journey to Enhanced Reasoning</h2>
+            <p>The paper outlines a two-pronged approach to boosting LLM reasoning, starting with a pure RL exploration and culminating in a refined, high-performance model.</p>
+
+            <h3><i class="fas fa-atom"></i> DeepSeek-R1-Zero: The RL Pathfinder</h3>
+            <p>DeepSeek-R1-Zero was trained using large-scale RL (GRPO algorithm) directly on a base model (DeepSeek-V3-Base) without initial SFT. This approach aimed to explore the raw potential of RL in developing reasoning.</p>
+            <ul>
+                <li><strong>Emergent Capabilities:</strong> Naturally developed powerful reasoning, self-verification, reflection, and long Chain-of-Thought (CoT) generation.</li>
+                <li><strong>Performance Leap:</strong> On AIME 2024, pass@1 score increased from 15.6% to 71.0%. With majority voting (cons@64), it reached 86.7%, surpassing OpenAI-o1-0912.</li>
+                <li><strong>Challenges:</strong> Faced issues like poor readability and language mixing due to the unconstrained nature of pure RL.</li>
+            </ul>
+            <div class="aha-moment">
+                <p><i class="fas fa-lightbulb-on"></i> The "Aha Moment" of R1-Zero:</p>
+                <blockquote>
+                During training, an intermediate version of R1-Zero demonstrated a fascinating self-correction behavior. When solving a math problem (√a – √a + x = x), after an initial attempt, the model outputted:
+                <br><em>"...Wait, wait. Wait. That's an aha moment I can flag here. Let's reevaluate this step-by-step to identify if the correct sum can be..."</em>
+                <br>This anthropomorphic rethinking showcases the model's autonomous development of advanced problem-solving strategies driven purely by RL incentives.
+                </blockquote>
+            </div>
+
+            <h3><i class="fas fa-cogs"></i> DeepSeek-R1: The Polished Performer</h3>
+            <p>To address R1-Zero's limitations and further boost performance, DeepSeek-R1 was developed through a multi-stage pipeline:</p>
+            <ol>
+                <li><strong>Cold Start SFT:</strong> Fine-tuning DeepSeek-V3-Base with a small amount (thousands) of high-quality, long CoT data, designed for readability (including summaries).</li>
+                <li><strong>Reasoning-Oriented RL:</strong> Applying RL similar to R1-Zero, but with an added language consistency reward to mitigate language mixing.</li>
+                <li><strong>Rejection Sampling & SFT:</strong> Collecting high-quality reasoning trajectories (approx. 600k) via rejection sampling from the RL checkpoint. Combining these with non-reasoning data (approx. 200k from DeepSeek-V3 pipeline) for a comprehensive SFT.</li>
+                <li><strong>RL for All Scenarios:</strong> A final RL stage focusing on helpfulness, harmlessness, and further refining reasoning, using rule-based rewards for reasoning and preference models for general data.</li>
+            </ol>
+            <div class="performance-highlight">
+                <p>DeepSeek-R1 achieved performance comparable to <strong>OpenAI-o1-1217</strong> on several reasoning tasks. For example, on <strong>AIME 2024 (Pass@1)</strong>, DeepSeek-R1 scored <strong>79.8%</strong> (vs. OpenAI-o1-1217's 79.2%) and on <strong>MATH-500 (Pass@1)</strong>, it scored an impressive <strong>97.3%</strong> (vs. OpenAI-o1-1217's 96.4%).</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2><i class="fas fa-chart-line"></i> Performance Snapshot: DeepSeek-R1 vs. The Field</h2>
+            <p>The paper provides comprehensive benchmarks. Here's a summary of DeepSeek-R1's performance against notable models (primarily from Figure 1 and Table 4):</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Benchmark</th>
+                        <th>Metric</th>
+                        <th><span class="model-name">DeepSeek-R1</span></th>
+                        <th>OpenAI-o1-1217</th>
+                        <th>OpenAI-o1-mini</th>
+                        <th>DeepSeek-V3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>AIME 2024</td>
+                        <td>Pass@1</td>
+                        <td><span class="value-excellent">79.8%</span></td>
+                        <td>79.2%</td>
+                        <td>63.6%</td>
+                        <td>39.2%</td>
+                    </tr>
+                    <tr>
+                        <td>Codeforces</td>
+                        <td>Percentile</td>
+                        <td><span class="value-excellent">96.3%</span></td>
+                        <td>96.6%</td>
+                        <td>93.4%</td>
+                        <td>58.7%</td>
+                    </tr>
+                    <tr>
+                        <td>GPQA Diamond</td>
+                        <td>Pass@1</td>
+                        <td><span class="value-good">71.5%</span></td>
+                        <td>75.7%</td>
+                        <td>60.0%</td>
+                        <td>59.1%</td>
+                    </tr>
+                    <tr>
+                        <td>MATH-500</td>
+                        <td>Pass@1</td>
+                        <td><span class="value-excellent">97.3%</span></td>
+                        <td>96.4%</td>
+                        <td>90.0%</td>
+                        <td>90.2%</td>
+                    </tr>
+                    <tr>
+                        <td>MMLU</td>
+                        <td>Pass@1</td>
+                        <td><span class="value-good">90.8%</span></td>
+                        <td>91.8%</td>
+                        <td>85.2%</td>
+                        <td>88.5%</td>
+                    </tr>
+                    <tr>
+                        <td>SWE-bench Verified</td>
+                        <td>Resolved</td>
+                        <td><span class="value-good">49.2%</span></td>
+                        <td>48.9%</td>
+                        <td>41.6%</td>
+                        <td>36.8%</td>
+                    </tr>
+                     <tr>
+                        <td>LiveCodeBench</td>
+                        <td>Pass@1-COT</td>
+                        <td><span class="value-excellent">65.9%</span></td>
+                        <td>63.4%</td>
+                        <td>53.8%</td>
+                        <td>36.2%</td>
+                    </tr>
+                    <tr>
+                        <td>AlpacaEval 2.0</td>
+                        <td>LC-winrate</td>
+                        <td><span class="value-excellent">87.6%</span></td>
+                        <td>-</td>
+                        <td>57.8%</td>
+                        <td>70.0%</td>
+                    </tr>
+                     <tr>
+                        <td>ArenaHard</td>
+                        <td>GPT-4-1106</td>
+                        <td><span class="value-excellent">92.3%</span></td>
+                        <td>-</td>
+                        <td>92.0%</td>
+                        <td>85.5%</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><em>Note: OpenAI-o1-1217 data is based on official reports where direct API access was challenging. '-' indicates data not readily available in the compared tables/figures.</em></p>
+        </section>
+
+        <section class="section">
+            <h2><i class="fas fa-share-alt"></i> Distillation: Empowering Smaller Models</h2>
+            <p>A key contribution is the successful distillation of DeepSeek-R1's reasoning capabilities into smaller, more efficient dense models (Qwen and Llama series). Around 800k training samples generated by DeepSeek-R1 were used for SFT.</p>
+            <ul>
+                <li><strong>Significant Uplift:</strong> Distilled models show remarkable performance. For example, <span class="model-name">DeepSeek-R1-Distill-Qwen-7B</span> achieves 55.5% on AIME 2024, outperforming QwQ-32B-Preview.</li>
+                <li><strong>SOTA Performance:</strong> <span class="model-name">DeepSeek-R1-Distill-Qwen-32B</span> scores 72.6% on AIME 2024 and 94.3% on MATH-500, comparable to OpenAI-o1-mini.</li>
+                <li><strong>RL vs. Distillation:</strong> Direct distillation from a powerful teacher (DeepSeek-R1) yielded better results for smaller models than applying large-scale RL directly to those smaller models. This suggests that the reasoning patterns discovered by larger base models are crucial.</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2><i class="fas fa-road"></i> Limitations & Future Directions</h2>
+            <p>The authors acknowledge current limitations and outline future research paths:</p>
+            <ul>
+                <li><strong>General Capability:</strong> DeepSeek-R1 currently lags DeepSeek-V3 in areas like function calling, multi-turn dialogues, and complex role-playing. Future work will explore leveraging long CoT for these tasks.</li>
+                <li><strong>Language Mixing:</strong> While improved, handling queries in languages other than English and Chinese can still result in mixed-language responses.</li>
+                <li><strong>Prompt Sensitivity:</strong> DeepSeek-R1 is sensitive to prompts; few-shot prompting can degrade performance. Zero-shot with clear problem descriptions is recommended.</li>
+                <li><strong>Software Engineering Tasks:</strong> Large-scale RL hasn't been extensively applied due to long evaluation times. Future versions aim to improve this via rejection sampling or asynchronous evaluations.</li>
+            </ul>
+             <p>This research significantly pushes the boundaries of LLM reasoning through RL, offering both powerful new models and valuable insights into the learning process itself. The open-sourcing of these models and distilled versions is a major contribution to the AI community.</p>
+            <a href="https://arxiv.org/abs/2501.12948" target="_blank" class="cta-button"><i class="fas fa-file-pdf"></i> Read the Full Paper on arXiv</a>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>Report generated based on OCR data from "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning" (arXiv:2501.12948v1).</p>
+        <p>© 2024 AI Insights Digest. All rights reserved for this report's presentation.</p>
+    </footer>
+
+</body>
+</html>
